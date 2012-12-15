@@ -12,7 +12,7 @@ public import zsocket;
 public import zsockopt;
 public import zstr;
 public import zframe;
-//public import zmsg;
+public import zmsg;
 
 
 alias long int64_t;

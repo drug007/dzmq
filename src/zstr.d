@@ -50,7 +50,7 @@ zstr_recv (void *zocket)
     zmq_msg_init (&message);
     if (zmq_recvmsg (zocket, &message, 0) < 0)
         return null;
-
+        
     size_t size = zmq_msg_size (&message);
     auto str = to!string(zmq_msg_data (&message)[0..size]);
     zmq_msg_close (&message);
@@ -100,22 +100,21 @@ zstr_send (void *zocket, string str)
 }
 
 
-//////  --------------------------------------------------------------------------
-//////  Send a string to a socket in 0MQ string format, with MORE flag
-////int
-////zstr_sendm (void *zocket, const char *string)
-////{
-////    assert (zocket);
-////    assert (string);
-////
-////    zmq_msg_t message;
-////    zmq_msg_init_size (&message, strlen (string));
-////    memcpy (zmq_msg_data (&message), string, strlen (string));
-////    int rc = zmq_sendmsg (zocket, &message, ZMQ_SNDMORE);
-////    zmq_msg_close (&message);
-////    return rc == -1? -1: 0;
-////}
-////
+//  --------------------------------------------------------------------------
+//  Send a string to a socket in 0MQ string format, with MORE flag
+int
+zstr_sendm (void *zocket, string str)
+{
+    assert (zocket);
+
+    zmq_msg_t message;
+    zmq_msg_init_size (&message, str.length);
+    memcpy (zmq_msg_data (&message), str.ptr, str.length);
+    int rc = zmq_sendmsg (zocket, &message, ZMQ_SNDMORE);
+    zmq_msg_close (&message);
+    return rc == -1? -1: 0;
+}
+
 ////static int
 ////s_zstr_sendf_impl (void *zocket, bool more, const char *format, va_list argptr)
 ////{

@@ -47,7 +47,7 @@ version(linux) {// todo should it be Posix?
     }
 }
 
-class ZMQContext {
+struct ZMQContext {
 private:	
     void* _context;              //  Our 0MQ context
     SList!Zocket _sockets;       //  Sockets held by this thread
@@ -59,9 +59,9 @@ public:
 	//  --------------------------------------------------------------------------
 	//  Constructor
 	
-	this (int threads)
+	this (int iothreads)
 	{
-	    _iothreads = threads;
+	    _iothreads = iothreads;
 	    _main = true;
 	
 		// todo temporary
@@ -97,13 +97,13 @@ public:
 	//  wasn't sufficient memory available.
 	
 	auto
-	shadow (ZMQContext ctx)
+	shadow ()
 	{
 	    //  Shares same 0MQ context but has its own list of sockets so that
 	    //  we create, use, and destroy sockets only within a single thread.
 	    auto self = new ZMQContext(1);
 	    
-	    self._context = ctx.zctxUnderlying();
+	    self._context = zctxUnderlying();
 	    self._sockets = SList!(Zocket)();
 	
 	    return self;
@@ -201,12 +201,7 @@ private:
 }	
 
 unittest {
-	import std.stdio;
-	
-    writef (" * zctx: ");
-
-    //  @selftest
-    //  Create and destroy a context without using it
+	//  Create and destroy a context without using it
     auto ctx = new ZMQContext (1);
     ctx.finalize();
 
@@ -230,8 +225,5 @@ unittest {
 
     //  Everything should be cleanly closed now
     ctx.finalize ();
-    //  @end
-
-    writef ("OK\n");
 }
 
